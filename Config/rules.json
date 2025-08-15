@@ -1,0 +1,6 @@
+{
+  "alerts": {
+    "port_scan": "[ALERT] Port scan detected from {src}",
+    "flood": "[ALERT] Flood attack detected from {src}"
+  }
+}

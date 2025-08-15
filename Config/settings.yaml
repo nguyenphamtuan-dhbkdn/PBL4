@@ -1,0 +1,4 @@
+interface: null   # null = card mặc định
+port_scan_threshold: 5
+flood_threshold: 50
+time_window: 5
