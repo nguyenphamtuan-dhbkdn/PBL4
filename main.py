@@ -1,15 +1,22 @@
+# main.py
 from Src.sniffer import start_sniff
-from Src.stats import show_stats
+from Src.stats import pretty_print
 from Data.models import init_db
 import threading, time
 
-def stats_printer():
+def stats_printer(interval=30):
     while True:
-        time.sleep(100)
-        print("[STATS]", show_stats())
-
+        time.sleep(interval)
+        pretty_print()
 if __name__ == "__main__":
     print("[START] IDS Project")
     init_db()
-    threading.Thread(target=stats_printer, daemon=True).start()
-    start_sniff()
+    threading.Thread(target=stats_printer, args=(30,), daemon=True).start()
+    try:
+        start_sniff()
+    except KeyboardInterrupt:
+        print("\n[STOP] User stopped IDS.")
+    finally:
+        print("[EXIT] IDS stopped.")
+        print("[FINAL STATS]")
+        pretty_print()

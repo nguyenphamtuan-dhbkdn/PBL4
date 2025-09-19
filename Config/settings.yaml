@@ -1,4 +1,11 @@
-interface: null   # null = card mặc định
+# config/settings.yaml
+mode: host               # 'host' = chỉ inbound (dst == MY_IP); 'network' = giám sát toàn mạng
+interface: null         # None = card mặc định; or "Wi-Fi", "wlan0", ...
 port_scan_threshold: 5
-flood_threshold: 50
-time_window: 5
+port_scan_window: 10     # giây để gom cổng quét
+flood_threshold: 20
+time_window: 5           # giây để gom packet cho flood
+alert_cooldown: 60       # giây: mỗi (src, type) chỉ báo 1 lần trong cooldown
+safe_dst_ports: [80,443,53]  # bỏ qua các port "bình thường" khi phát hiện scan nếu muốn
+db_flush_interval: 3     # giây, worker flush buffer xuống DB
+log_file: "Logs/alerts.log"

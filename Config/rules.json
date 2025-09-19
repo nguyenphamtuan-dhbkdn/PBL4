@@ -1,6 +1,11 @@
 {
   "alerts": {
     "port_scan": "[ALERT] Port scan detected from {src}",
-    "flood": "[ALERT] Flood attack detected from {src}"
+    "flood": "[ALERT] Flood attack detected from {src}",
+    "syn_flood": "[ALERT] SYN flood detected from {src}",
+    "stealth_scan": "[ALERT] Stealth scan (FIN/NULL/XMAS) from {src} (port {port})"
+  },
+  "messages": {
+    "db_insert_failed": "Failed to insert alert into DB: {err}"
   }
 }

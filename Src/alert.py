@@ -1,3 +1,4 @@
+# Src/alert.py
 import logging
 from Data.models import insert_alert
 
@@ -7,19 +8,21 @@ logging.basicConfig(
     format="%(asctime)s - %(message)s"
 )
 
-def send_alert(alert_type, message,severity, packet_info, extra_info=None):
-    # print(message)
-    logging.info(f"[{severity}] {message}")
+def send_alert(alert_type, message, severity, packet_info, extra=None):
+    desc = message if not extra else f"{message} | {extra}"
+    logging.info(f"[{severity}] {desc}")
 
-    insert_alert(
-        src_ip=packet_info["src"],
-        dst_ip=packet_info["dst"],
-        protocol=packet_info["protocol"] or "N/A",
-        attack_type=alert_type,
-        severity=severity,
-        description=message if not extra_info else f"{message} | {extra_info}"
-    )
+    try:
+        insert_alert(
+            packet_info["src"],
+            packet_info["dst"],
+            packet_info.get("protocol") or "N/A",
+            alert_type,
+            severity,
+            desc
+        )
+    except Exception as e:
+        logging.error(f"DB insert fail: {e}")
 
-    # In console nếu severity cao
     if severity in ("HIGH", "CRITICAL"):
-        print(f"[{severity}] {message}")
+        print(f"[{severity}] {desc}")
