@@ -88,3 +88,4 @@
 2025-10-16 17:13:53,773 - [MEDIUM] [ALERT] Flood attack detected from 203.113.188.3 | 20 gói tin gửi trong 5s
 2025-10-16 17:14:04,768 - [MEDIUM] [ALERT] Flood attack detected from 192.168.1.20 | 20 gói tin gửi trong 5s
 2025-10-16 17:14:46,302 - [MEDIUM] [ALERT] Port scan detected from 116.97.90.124 | 5 cổng bị quét trong 10s
+2025-10-17 07:37:34,991 - [MEDIUM] [ALERT] Port scan detected from 172.20.10.1 | 5 cổng bị quét trong 10s
