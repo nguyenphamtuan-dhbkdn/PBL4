@@ -1,11 +1,18 @@
 {
   "alerts": {
     "port_scan": "[ALERT] Port scan detected from {src}",
+    "stealth_scan": "[ALERT] Stealth scan (FIN/NULL/XMAS) from {src} (port {port})",
     "flood": "[ALERT] Flood attack detected from {src}",
     "syn_flood": "[ALERT] SYN flood detected from {src}",
-    "stealth_scan": "[ALERT] Stealth scan (FIN/NULL/XMAS) from {src} (port {port})"
+    "brute_force": "[ALERT] Brute-force attempt from {src}"
   },
   "messages": {
-    "db_insert_failed": "Failed to insert alert into DB: {err}"
+    "db_insert_failed": "Failed to insert alert into DB: {err}",
+    "config_missing": "Configuration file missing or invalid: {path}",
+    "interface_not_found": "Network interface {iface} not found"
+  },
+  "info": {
+    "startup": "IDS initialized in {mode} mode on interface {iface}",
+    "shutdown": "IDS stopped. All data flushed to DB/logs."
   }
 }

@@ -1,11 +1,33 @@
-# config/settings.yaml
-mode: host               # 'host' = chỉ inbound (dst == MY_IP); 'network' = giám sát toàn mạng
-interface: null         # None = card mặc định; or "Wi-Fi", "wlan0", ...
-port_scan_threshold: 5
-port_scan_window: 10     # giây để gom cổng quét
-flood_threshold: 20
-time_window: 5           # giây để gom packet cho flood
-alert_cooldown: 60       # giây: mỗi (src, type) chỉ báo 1 lần trong cooldown
-safe_dst_ports: [80,443,53]  # bỏ qua các port "bình thường" khi phát hiện scan nếu muốn
-db_flush_interval: 3     # giây, worker flush buffer xuống DB
+# =====================================
+# IDS System Configuration
+# =====================================
+
+mode: host                # 'host' = chỉ inbound traffic, 'network' = toàn bộ mạng LAN
+interface: null           # null = card mặc định, hoặc tên card cụ thể ("Wi-Fi", "eth0", "wlan0")
+
+# ----------- PORT SCAN -----------
+port_scan_threshold: 5     # Số lượng port khác nhau trong 1 cửa sổ thời gian để xem là scan
+port_scan_window: 10       # (giây) Khoảng thời gian gom port để tính toán
+safe_dst_ports: [80, 443, 53, 22]  # Các port "bình thường" bỏ qua khi quét
+
+# ----------- FLOOD / DoS -----------
+flood_threshold: 20        # Số lượng gói tin trong cửa sổ thời gian
+time_window: 5             # (giây) để gom packet và phát hiện Flood
+syn_flood_ratio: 0.8       # Nếu >80% gói là SYN → nghi ngờ SYN Flood
+
+# ----------- BRUTE FORCE -----------
+bruteforce_window: 60      # (giây) thời gian quan sát các lần đăng nhập thất bại
+bruteforce_threshold: 5    # số lần login thất bại từ 1 IP → coi là brute-force
+bruteforce_ports: [21, 22, 25, 80, 443]  # các port có thể bị brute-force
+
+# ----------- ALERT CONTROL -----------
+alert_cooldown: 60         # (giây) mỗi (src, type) chỉ cảnh báo 1 lần trong thời gian này
+
+# ----------- LOGGING / DATABASE -----------
+db_flush_interval: 3       # (giây) worker flush buffer xuống DB
 log_file: "Logs/alerts.log"
+db_file: "Data/alerts.db"  # dùng SQLite nếu có
+
+# ----------- MISC -----------
+save_raw_packets: false    # true để lưu gói tin nghi ngờ
+debug_mode: false          # bật để in thêm thông tin khi test
