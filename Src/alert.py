@@ -9,10 +9,12 @@ logging.basicConfig(level=logging.INFO, handlers=[log_handler], format="%(asctim
 
 _ALERT_QUEUE = None  # queue.Queue() do GUI set vào bằng set_alert_queue()
 
+
 def set_alert_queue(q):
     """GUI gọi set_alert_queue(queue) để nhận alert realtime"""
     global _ALERT_QUEUE
     _ALERT_QUEUE = q
+
 
 def _extra_to_str(extra):
     if not extra:
@@ -26,6 +28,7 @@ def _extra_to_str(extra):
             return json.dumps(extra, ensure_ascii=False)
         except:
             return str(extra)
+
 
 def send_alert(alert_type, message, severity, packet_info, count=1, extra=None):
     """
@@ -48,7 +51,16 @@ def send_alert(alert_type, message, severity, packet_info, count=1, extra=None):
 
     logging.info(f"[{severity}] {full_msg}")
 
-    # insert to DB (models.insert_alert expects named args)
+    # --- 1. GUI PUSH (ƯU TIÊN: Đẩy lên giao diện trước để đảm bảo nhìn thấy) ---
+    try:
+        if _ALERT_QUEUE is not None:
+            _ALERT_QUEUE.put_nowait((src, alert_type, full_msg, severity, count, extra))
+            print(">>> [ALERT] PUSHED TO GUI <<<")
+    except Exception as e:
+        logging.exception("Failed to push alert to GUI queue")
+        print(f"!!! GUI QUEUE FAILED: {e}")
+
+    # --- 2. DB INSERTION (Thứ yếu: Nếu lỗi, in ra màn hình để debug DB) ---
     try:
         insert_alert(
             src_ip=src,
@@ -62,13 +74,11 @@ def send_alert(alert_type, message, severity, packet_info, count=1, extra=None):
             packet_count=int(count) if isinstance(count, (int, float, str)) and str(count).isdigit() else count,
             extra_info=extra_str
         )
+        print(">>> [DB] Alert inserted successfully. <<<")
     except Exception as e:
-        logging.error(f"DB insert failed: {e}")
+        # HIỆN LỖI DB RA CONSOLE NGAY LẬP TỨC
+        logging.error(f"[DB ERROR] insert_alert() failed: {e}")
+        print(f"!!! [CRITICAL DB ERROR] FAILED TO INSERT ALERT: {e}")
+        print("!!! THÔNG BÁO: Lỗi DB có thể khiến hệ thống hoạt động không ổn định !!!")
 
-    # push to GUI queue if set
-    try:
-        if _ALERT_QUEUE is not None:
-            # keep a simple payload
-            _ALERT_QUEUE.put_nowait((src, alert_type, full_msg, severity, count, extra))
-    except Exception:
-        logging.exception("Failed to push alert to GUI queue")
+    # --- END OF send_alert ---

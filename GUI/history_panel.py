@@ -246,7 +246,11 @@ class HistoryPanel(tk.Frame):
             ax1.set_xticklabels(top_ips, rotation=45, ha="right")
             fig1.tight_layout(pad=2)
             ax1.set_ylabel("Số alert")
-            ax1.legend(fontsize=8, loc='upper right')
+            if ax1.get_legend_handles_labels()[0]:
+                ax1.legend(fontsize=8, loc='upper right')
+            else:
+                ax1.text(0.5, 0.5, "Không có dữ liệu", ha="center", va="center", fontsize=11, color="gray",
+                         transform=ax1.transAxes)
 
         canvas1 = FigureCanvasTkAgg(fig1, master=self.chart_frame_top)
         canvas1.draw()

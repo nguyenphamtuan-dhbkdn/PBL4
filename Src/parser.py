@@ -2,7 +2,12 @@
 from scapy.layers.inet import IP, TCP, UDP, ICMP
 
 def parse_packet(pkt):
+    # [TRACE P1] In ra tên lớp đầu tiên của gói tin (ví dụ: 'Ether' hoặc 'ARP')
+    print(f"[PARSER DEBUG] Checking Pkt Type: {pkt.summary()}")
+
     if IP not in pkt:
+        # [TRACE P2] Log rằng gói tin bị hủy vì không phải IP
+        print("[PARSER DEBUG] Packet DROPPED (Not IP packet).")
         return None
 
     ip = pkt[IP]

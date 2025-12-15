@@ -5,10 +5,10 @@ from datetime import datetime
 
 # ================== CONFIG ==================
 DB_CONFIG = {
-    "server": "ADMIN\\VANQUI",
-    "database": "IDS_DB",
-    "username": "sa",
-    "password": "Password.1",
+    "server": "LAPTOP-TDCQKAU9\\SQLEXPRESS",
+    "database": "IDS_DB_TEST",
+    "username": "test",
+    "password": "1234",
     "driver": "ODBC Driver 17 for SQL Server"
 }
 
@@ -23,15 +23,18 @@ def get_connection():
             f"UID={DB_CONFIG['username']};"
             f"PWD={DB_CONFIG['password']}"
         )
+        print("[DB SUCCESS] Connected to SQL Server")
         return conn
     except Exception as e:
-        print(f"[DB ERROR] Cannot connect: {e}")
+        print(f"[DB ERROR] Cannot connect to SQL Server: {e}")
+        print(f"[DB INFO] Server: {DB_CONFIG['server']}, DB: {DB_CONFIG['database']}")
         raise
 
 # ================== INSERT ALERT ==================
 def insert_alert(src_ip, dst_ip, protocol, attack_type, severity, description,
                  src_port=None, dst_port=None, packet_count=1, extra_info=None):
     """Thêm một bản ghi cảnh báo (alert) vào DB"""
+    conn = None
     try:
         conn = get_connection()
         cursor = conn.cursor()
@@ -42,10 +45,13 @@ def insert_alert(src_ip, dst_ip, protocol, attack_type, severity, description,
         """, (src_ip, dst_ip, protocol, src_port, dst_port,
               attack_type, severity, description, packet_count, extra_info))
         conn.commit()
+        print(f"[DB OK] Alert inserted: {attack_type} from {src_ip}")
     except Exception as e:
         print(f"[DB ERROR] insert_alert() failed: {e}")
+        print(f"[DB DEBUG] Params: src_ip={src_ip}, attack_type={attack_type}, severity={severity}")
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 # ================== INSERT TRAFFIC ==================
 def insert_traffic(src_ip, dst_ip, protocol, src_port, dst_port, info, packet_count=1):

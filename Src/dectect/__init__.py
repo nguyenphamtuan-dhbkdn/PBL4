@@ -1,5 +1,6 @@
-# Src/detect/__init__.py
-import yaml, json
+# Src/dectect/__init__.py
+import yaml
+import json
 from .portscan import PortScanDetector
 from .flood import FloodDetector
 from .bruteforce import BruteForceDetector

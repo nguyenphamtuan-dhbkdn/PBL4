@@ -83,7 +83,10 @@ class IDS_GUI:
     # ======================================================
     def update_stats_loop(self):
         if self.running:
-            self.update_charts()
+            try:
+                self.update_charts()
+            except Exception as e:
+                print(f"[ERROR in update_charts] {e}")
         self.root.after(5000, self.update_stats_loop)
 
     def update_charts(self):
@@ -137,8 +140,11 @@ class IDS_GUI:
                     text = f"[{severity}] {msg}\n"
                     self.console.insert(tk.END, text)
                     self.console.see(tk.END)
+                    print(f"[GUI POLL] Received alert: {alert_type} from {src}")
             except queue.Empty:
                 pass
+            except Exception as e:
+                print(f"[ERROR in poll_alerts_loop] {e}")
         self.root.after(1000, self.poll_alerts_loop)
 
     # ======================================================

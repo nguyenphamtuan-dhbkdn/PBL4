@@ -26,13 +26,26 @@ _iface = settings.get("interface") or None
 _sniff_thread = None
 _stop_event = threading.Event()
 
+
 def _process_packet(packet):
     if _stop_event.is_set():
         return
     try:
+        # [TRACE S1] Confirms Sniffer received a packet and entered the try block
+        # Nếu dòng này không hiện, lỗi nằm ở Scapy/Driver
+        # print(f"[SNIFFER TRACE] Processing packet: {packet.summary()}")
+
         packet_info = parse_packet(packet)
+
         if not packet_info:
+            # [TRACE S2] Dropped by Parser (e.g., ARP, IPv6, Not IP)
+            # Nếu Nmap chạy và chỉ thấy dòng này, nghĩa là gói tin Nmap không được nhận là IP.
+            print("[SNIFFER TRACE] Packet dropped early (Not parsed or not IP).")
             return
+
+        # [TRACE S3] Packet is valid IP and moving to Stats/Detect
+        # Nếu dòng này hiện, chắc chắn gói tin sẽ tới Detector.
+        print(f"[SNIFFER TRACE] Dispatching IP Pkt from {packet_info['src']}")
 
         # feed stats
         try:
@@ -80,9 +93,11 @@ def _process_packet(packet):
     except Exception as e:
         print("[ERROR in _process_packet]", e)
 
+
 def _sniff_loop(iface=None):
     while not _stop_event.is_set():
         sniff(iface=iface, prn=_process_packet, store=False, timeout=1)
+
 
 def start_sniff(iface=None):
     """Start sniffing in background thread. Returns True if started."""
@@ -94,6 +109,7 @@ def start_sniff(iface=None):
     _sniff_thread = threading.Thread(target=_sniff_loop, kwargs={"iface": _iface}, daemon=True)
     _sniff_thread.start()
     return True
+
 
 def stop_sniff():
     global _sniff_thread, _stop_event

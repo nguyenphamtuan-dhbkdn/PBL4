@@ -3,7 +3,7 @@
 # =====================================
 
 mode: host                # 'host' = chỉ inbound traffic, 'network' = toàn bộ mạng LAN
-interface: null           # null = card mặc định, hoặc tên card cụ thể ("Wi-Fi", "eth0", "wlan0")
+interface: null          # null = card mặc định, hoặc tên card cụ thể ("Wi-Fi", "eth0", "wlan0")
 
 # ----------- PORT SCAN -----------
 port_scan_threshold: 5     # Số lượng port khác nhau trong 1 cửa sổ thời gian để xem là scan

@@ -21,11 +21,17 @@ class FloodDetector(AttackDetector):
         self.history[src] = [t for t in self.history[src] if now - t <= win]
         count = len(self.history[src])
 
+        # --- ĐOẠN DEBUG: In số lượng gói tin đếm được ---
+        # if count > 5:
+        #    print(f"[DEBUG] IP {src} đã gửi {count} gói tin")
+        # -----------------------------------------------
+
         if count >= self.settings["flood_threshold"]:
             sev = self._severity(count)
             if self._cooldown_ok(src):
                 msg = self.rules["alerts"]["flood"].format(src=src)
                 extra = f"{count} gói tin gửi trong {win}s"
+                print(f"!!! PHÁT HIỆN TẤN CÔNG TỪ {src} !!!")  # In ra để bạn thấy ngay
                 return ("Flood Attack", msg, sev,count, extra)
         return None
 
